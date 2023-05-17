@@ -1,12 +1,11 @@
 package main
 
 import (
+	"booking/helper"
 	"fmt"
-	"os"
-	"strings"
 )
 
-// To run do: go run main.go (once you are in booking directory)
+// To run do: go run . (once you are in booking directory)
 
 // crtl c to exit application
 
@@ -19,7 +18,6 @@ var lastName string
 var userTickets uint // uint is positive only numbers, as you can't order negative tickets
 var remainingTickets uint = 10
 eventName := "Random Event"
-
 
 // Arrays in Go, fixed size like in Java (so not dynamic), only the same data type can be stored as per the declared/assigned arrayType
 
@@ -36,39 +34,53 @@ for {
 
 	if (remainingTickets == 0){
 		fmt.Print("No more tickets to purchase, application exited")
-		os.Exit(0)
+		break
 	}
 
 // Greeting/Intro
 
-fmt.Printf("Welcome to this fake booking sytem, here you can buy tickets for %v \n", eventName)
-fmt.Printf("There are currently %v tickets remaining \n", remainingTickets)
+helper.Greeting(eventName, remainingTickets)
 
-// ask user for their name
+// Ask user for their name
 
-fmt.Println("Please enter your First Name:")
-fmt.Scan(&firstName) // & is for memory address so that it will stop instead of running without asking for user input as it references to memory instead of passing through value
+	fmt.Println("Please enter your First Name:")
+	fmt.Scan(&firstName) // & is for memory address so that it will stop instead of running without asking for user input as it references to memory instead of passing through value
+	
+	fmt.Println("Please enter your Last Name:")
+	fmt.Scan(&lastName)
 
-fmt.Println("Please enter your Last Name:")
-fmt.Scan(&lastName)
+	// Input Validation
 
-// ask for amount of tickets to purchase
+	var nameValid = len(firstName) >=2 && len(lastName) >= 2
+
+// Ask for amount of tickets to purchase
 
 if (!valid){
 
-	fmt.Println("Please enter how many tickets you would like to purchase")
+	helper.TicketMessage()
 	fmt.Scan(&userTickets)
 
-	for (userTickets > remainingTickets){
-		fmt.Printf("Error can only purchase tickets less than %v amount \n", remainingTickets)
-		fmt.Println("Please enter how many tickets you would like to purchase")
-		fmt.Scan(&userTickets)
-	} // for is Go syntax for while loop
+	// Input Validation
+
+		if (userTickets == 0){
+			for (userTickets == 0){
+				fmt.Println("Error can only purchase tickets greater than amount of 0")
+				helper.TicketMessage()
+				fmt.Scan(&userTickets)
+			}  // for is Go syntax for while loop
+		} else if (userTickets > remainingTickets){
+			for (userTickets > remainingTickets){
+			fmt.Printf("Error can only purchase tickets less than %v amount and greater than 0 \n", remainingTickets)
+			helper.TicketMessage()
+			fmt.Scan(&userTickets)
+			}  
+		}
 
 }
 
 	valid = true
 
+	if (nameValid){
 	remainingTickets = remainingTickets - userTickets
 	userArr[0] = firstName + " " + lastName
 	userSlice = append(userSlice, firstName + " " + lastName) // this better than arrays as will have to do for each index 
@@ -94,22 +106,35 @@ if (!valid){
 		fmt.Printf("Slice length of slice is %v \n \n", len(userSlice))
 		fmt.Printf("------------------------------------------------------------ \n")
 
-	firstNames := []string{}
-
-	// for loop, In Go for replaces all loops including while, for can support all types of loops, while, for, for each, while do
-		// _ is a blank identifer it is for a variable you don't need to use 
-			// but gives you an error as not in use, so for normally is for index, element but index not used giving error since no need for index
-				// can use _ , need to make unused variables explicit with _ in Go
-
-		for _, element := range userSlice {
-			names := strings.Fields(element) // strings.Fields is equiv to .split in JS however splits by white space only
-			firstName := names[0]
-			firstNames = append(firstNames, firstName)
-		}
+		helper.PrintFirstNames(userSlice)
 
 
 		fmt.Printf("\n User: %v %v has purchased: %v tickets \n Only %v tickets remaining for %v \n \n", firstName, lastName, userTickets, remainingTickets, eventName)
-		fmt.Printf("First names of bookings are %v \n", firstNames)
+		fmt.Printf("First names of bookings are %v \n", helper.PrintFirstNames(userSlice))
+	} else {
+		fmt.Printf("Error: please make sure your first and last name are longer than 2 characters each \n")
 	}
-
 }
+} 
+
+// ----------------------------------------------- Further Notes ------------------------------------------------------------------------- //
+
+
+// In Go a function can return multiple values
+
+/* If we were to do a more generic type of input validation
+
+func validate(firstName string, lastName string, valid bool) (bool, bool) {
+
+	nameValid := firstName >=2 && lastName >=2
+	isValid := valid == true
+
+	return nameValid, isValid
+}
+
+// In use:
+
+nameValid, isValid := validate(firstName, lastName, valid)
+
+*/
+

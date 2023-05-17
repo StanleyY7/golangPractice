@@ -30,7 +30,5 @@ fmt.Printf("Hello %v \n", name2)
 name3 := "Trevor"
 fmt.Printf("Hello %v", name3)
 
-
-
-
 }
+
