@@ -1,7 +1,7 @@
 package helper
 
 import (
-	"fmt"
+	"fmt" // format
 )
 
 // To run do: go run . (once you are in booking directory)
