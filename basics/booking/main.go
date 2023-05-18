@@ -1,8 +1,10 @@
 package main
 
 import (
-	"booking/helper"
-	"fmt"
+	"booking/helper" // booking module helper package
+	"fmt"            // format module from Go
+	"sync"
+	"time"
 )
 
 // To run do: go run . (once you are in booking directory)
@@ -27,6 +29,11 @@ type userData struct {
 	ticketsOrdered uint
 }
 
+// Wait Group for concurrency, so if user buys 10 tickets exit application after correct inputs, it will wait for sendTicket go routine to finish
+// it will generate the ticket and then exit the application
+
+var wg = sync.WaitGroup{}
+
 func main(){
 
 	/* Global Variables */
@@ -47,7 +54,7 @@ for {
 
 	if (remainingTickets == 0){
 		fmt.Print("No more tickets to purchase, application exited")
-		break
+		break 
 	}
 
 // Greeting/Intro
@@ -147,10 +154,17 @@ if (!valid){
 
 		fmt.Printf("\n User: %v %v has purchased: %v tickets \n Only %v tickets remaining for %v \n \n", firstName, lastName, userTickets, remainingTickets, eventName)
 		fmt.Printf("First names of bookings are %v \n", PrintFirstNames())
+
+		wg.Add(1) // to add first go routine, multiple go routines, goes by index 1 to x
+		go SendTicket(userTickets, firstName, lastName) // go makes it concurrent/multi-thread for that function 
+		// by putting it in a go routine a lightweight thread, that is literally it.
+
+
 	} else {
 		fmt.Printf("Error: please make sure your first and last name are longer than 2 characters each \n")
 	}
 }
+wg.Wait() // waits for wait group threads to finish
 } 
 
 func PrintFirstNames() []string {
@@ -172,6 +186,33 @@ func PrintFirstNames() []string {
 			}
 			return firstNames
 }
+
+// Go Routines & Concurrency
+
+	// concurrency is running multiple parts of an application potentially at different time intervals simultaneously
+
+		// - Concurrency allows different parts of a program to make progress independently and potentially in parallel, 
+		// - leading to improved performance and responsiveness.
+
+		// Currently single thread execution, top down one by one, time.Sleep then blocks it
+		// optimally should be multiple thread execution so main program runs on its own thread
+		// and sendTicket per sendTicker runs on it's own thread so if 20 users get ticket at same time it will be efficient and no one is blocked
+
+		// Go Routines are lightweight can run millions of it without affecting performance, whereas traditional os threads are more costly 
+		// and take longer to run. Go Routines can also talk to each other and share data where traditional os threads in other languages can't 
+		// communicate.
+
+		func SendTicket(userTickets uint, firstName string, lastName string){
+			fmt.Printf("\n Ticket is being generated, please be patient \n")
+			time.Sleep(10 * time.Second) // this blocks the program so has to sleep 10 s and then remaining program can run, not concurrent
+			ticket := fmt.Sprintf("%v tickets for %v %v sent \n", userTickets, firstName, lastName)
+			fmt.Println("########################################################")
+			fmt.Printf("\n %v to email: example@example.com.au \n", ticket)
+			fmt.Printf("\n ######################################################## \n")
+			wg.Done()
+		}
+		
+		// advantage of Go is concurrency is cheap and efficient. 
 
 // ----------------------------------------------- Further Notes ------------------------------------------------------------------------- //
 
