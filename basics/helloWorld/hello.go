@@ -6,7 +6,7 @@ It has characteristics of both high-level programming languages like Python (i.e
 characteristics of low-level programming languages like C++ (pointers) & Java (static typing, efficient execution, more OOP orientated).
 */
 
-package hello // similar to Java, groups of related entities (i.e. classes, interfaces, objects) are organised within Packages.
+package main // similar to Java, groups of related entities (i.e. classes, interfaces, objects) are organised within Packages.
 
 /* Since with Go everything is organised within packages for certain methods like Print, this is also in a package.
 Will need to search official docs to find methods from different packages that need to be used. */

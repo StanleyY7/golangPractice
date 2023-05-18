@@ -9,6 +9,24 @@ import (
 
 // crtl c to exit application
 
+// Instead of Arrays we can use Slices (unqiue to Golang) which is it's own data structure (not method in Golang),
+// Slices are dynamic and are the Go equivalent of an ArrayList from Java
+// structure is: var sliceName = []sliceType{"value in slice" || leave blank if empty}, we are creating slice of maps here so different
+
+// var userSlice = make([]map[string]string, 0)
+
+var userSlice = make([]userData, 0)
+
+// Struct, similar to interface types in TypeScript, can create custom data structure and define what's in it unlike interface types and
+// similar to classes can also have it "do something" (so not just a data but also methods)
+// "create a pre defined struct/structure by listing all the properties it should have"
+
+type userData struct {
+	firstName string
+	lastName string
+	ticketsOrdered uint
+}
+
 func main(){
 
 	/* Global Variables */
@@ -22,11 +40,6 @@ eventName := "Random Event"
 // Arrays in Go, fixed size like in Java (so not dynamic), only the same data type can be stored as per the declared/assigned arrayType
 
 userArr := [10]string{} // structure is: var arrName = [size of array]arrayType{"value in array" || leave blank if empty} 
-
-// Instead of Arrays we can use Slices (unqiue to Golang) which is it's own data structure (not method in Golang), 
-// Slices are dynamic and are the Go equivalent of an ArrayList from Java
-
-userSlice := []string{} // structure is: var sliceName = []sliceType{"value in slice" || leave blank if empty}
 
 for {
 	
@@ -82,8 +95,31 @@ if (!valid){
 
 	if (nameValid){
 	remainingTickets = remainingTickets - userTickets
+	
+	// Map, a map is a data type/structure in Go. Consisting of key value pairs (as it maps unique keys to values)
+	// this way we can store a full block of data per user
+		
+	/*
+	var userMap = make(map[string]string) // structure to create empty map: var mapName = make(map[dataType of key]dataType of value)
+
+	// we can not mix data types so can't be var mapName = make(map[string]uint), specific to Go
+	// adding key value pairs to map
+	
+	userMap["firstName"] = firstName
+	userMap["lastName"] = lastName
+	userMap["ticketsOrdered"] = strconv.FormatUint(uint64(userTickets), 10)
+			*/
+
+			var userMap = userData {
+				firstName: firstName,
+				lastName: lastName,
+				ticketsOrdered: userTickets,
+			}
+
+
 	userArr[0] = firstName + " " + lastName
-	userSlice = append(userSlice, firstName + " " + lastName) // this better than arrays as will have to do for each index 
+
+	userSlice = append(userSlice, userMap) // this better than arrays as will have to do for each index 
 	// whilst with append method for slice don't need to do index
 
 	// Array Properties
@@ -96,7 +132,7 @@ if (!valid){
 	fmt.Printf("Array length of Array is %v \n \n", len(userArr))
 	fmt.Printf("------------------------------------------------------------ \n")
 
-	// Slice Properties, same syntax for Arrapy Properties
+	// Slice Properties, same syntax for Array Properties
 
 		fmt.Printf("------------------------------------------------------------ \n \n")
 		fmt.Println("                     Slice Properties:                         ");
@@ -106,16 +142,36 @@ if (!valid){
 		fmt.Printf("Slice length of slice is %v \n \n", len(userSlice))
 		fmt.Printf("------------------------------------------------------------ \n")
 
-		helper.PrintFirstNames(userSlice)
+		PrintFirstNames()
 
 
 		fmt.Printf("\n User: %v %v has purchased: %v tickets \n Only %v tickets remaining for %v \n \n", firstName, lastName, userTickets, remainingTickets, eventName)
-		fmt.Printf("First names of bookings are %v \n", helper.PrintFirstNames(userSlice))
+		fmt.Printf("First names of bookings are %v \n", PrintFirstNames())
 	} else {
 		fmt.Printf("Error: please make sure your first and last name are longer than 2 characters each \n")
 	}
 }
 } 
+
+func PrintFirstNames() []string {
+	// for loop, In Go for replaces all loops including while, for can support all types of loops, while, for, for each, while do
+	// _ is a blank identifer it is for a variable you don't need to use 
+		// but gives you an error as not in use, so for normally is for index, element but index not used giving error since no need for index
+			// can use _ , need to make unused variables explicit with _ in Go
+			firstNames := []string{}
+			for _, element := range userSlice {
+
+				// names := strings.Fields(element) // strings.Fields is equiv to .split in JS however splits by white space only
+				// firstName := names[0]
+				
+				// with map
+				// firstNames = append(firstNames, element["firstName"])
+
+				//with struct
+				firstNames = append(firstNames, element.firstName)
+			}
+			return firstNames
+}
 
 // ----------------------------------------------- Further Notes ------------------------------------------------------------------------- //
 
@@ -137,4 +193,5 @@ func validate(firstName string, lastName string, valid bool) (bool, bool) {
 nameValid, isValid := validate(firstName, lastName, valid)
 
 */
+
 
