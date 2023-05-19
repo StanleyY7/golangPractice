@@ -37,20 +37,21 @@ const (
 	version = "\nVersion: Go \nMade By Stanley \n"
 
 	question = "?"
-	bomb = "\u001B[37m" + "?" + "\u001B[0m"
+	bomb = "\u001B[37m" + "?" + "\u001B[0m" // can change ? to X to test it works and to see where bombs are
 	rBomb = "\u001B[31m" + "X" + "\u001B[0m"
 )
 
 var (
 	gameOver bool = false
 	nBombs int = 15
-	clearCells int = 100 - nBombs
+	clearCells int = 99 - nBombs
 	count int = 0
 	gameGrid = [10][10]string{}
 	xInput int
 	yInput int
 	correctInput bool = false
 	startInput string
+	bombDisplay int = 0
 )
 
 /* ------------------------------------------------------------ Functions ------------------------------------------------------------------------- */
@@ -59,6 +60,20 @@ var (
 
 func Wait(sec time.Duration){
 	time.Sleep(sec * time.Second)
+}
+
+func max(a, b int) int {
+    if a > b {
+        return a
+    }
+    return b
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 // Game Functions
@@ -134,28 +149,47 @@ func DisplayGrid(){
 	fmt.Println("")
 }
 
+func AdjacentBombs(xInput int, yInput int){
+
+	if (gameGrid[xInput][yInput] == question){
+		
+      for x := max(0, xInput-1); x <= min(9, xInput+1); x++ {
+            for y := max(0, yInput-1); y <= min(9, yInput+1); y++ {
+                if gameGrid[x][y] == bomb && (x != xInput || y != yInput) {
+                    bombDisplay++
+                }
+            }
+        }
+		}
+	
+}
+
 func CheckInput(){
 
 	for(!gameOver && count < clearCells){
 
 		fmt.Printf("Please enter a X coordinate \n")
-		xInputStr := ""
-		fmt.Scan(&xInputStr)
+		xInput := 0
+		fmt.Scan(&xInput)
 		fmt.Printf("\nPlease enter a Y coordinate \n")
-		yInputStr := ""
-		fmt.Scan(&yInputStr)
+		yInput := 0
+		fmt.Scan(&yInput)
 
-		xInput, errX := strconv.Atoi(xInputStr)
-		yInput, errY := strconv.Atoi(yInputStr)
-
-		if (len(xInputStr) == 1 && len(yInputStr) == 1 && errX == nil && errY == nil && gameGrid[xInput][yInput] == question){
+		if (xInput >= 0 && xInput <= 9  && yInput >= 0 && yInput <= 9 && gameGrid[xInput][yInput] == question){
 
 			count++
+			AdjacentBombs(xInput, yInput)
+			if(bombDisplay > 0){
+				gameGrid[xInput][yInput] = "\u001B[38;2;255;165;0m" + strconv.FormatInt(int64(bombDisplay), 10) + "\u001B[0m"
+				fmt.Printf("\n That cell is clear! There are %v cells remaining \n", clearCells - count)
+				DisplayGrid()
+			} else {
 			gameGrid[xInput][yInput] = " "
 			fmt.Printf("\n That cell is clear! There are %v cells remaining \n", clearCells - count)
 			DisplayGrid()
+			}
 
-		} else if (errX != nil || errY != nil || len(xInputStr) != 1 || len(yInputStr) != 1){
+		} else if (xInput >= 10 || xInput < 0  || yInput >= 10 || yInput < 0){
 
 			fmt.Printf("\nInvalid input \n \n")
 

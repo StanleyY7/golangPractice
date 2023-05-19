@@ -3,10 +3,10 @@ package gameStats
 var Wins = 0
 var Losses = 0
 
-func IncrementWins(){
+func IncrementWins()  {
 	Wins++
 }
 
-func IncrementLosses(){
+func IncrementLosses()  {
 	Losses++
 }
