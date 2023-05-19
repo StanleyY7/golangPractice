@@ -37,7 +37,7 @@ const (
 	version = "\nVersion: Go \nMade By Stanley \n"
 
 	question = "?"
-	bomb = "\u001B[37m" + "?" + "\u001B[0m" // can change ? to X to test it works and to see where bombs are
+	bomb = "\u001B[37m" + "?" + "\u001B[0m" // can change ? to X to manually test it works and to see where bombs are
 	rBomb = "\u001B[31m" + "X" + "\u001B[0m"
 )
 
@@ -111,15 +111,20 @@ func GameRestart(){
 
 // GameGrid Functions
 
-func FillGrid(){
+func FillGrid() (int, int) {
+	var result int
+	var result2 int
 	for i:= 0; i < len(gameGrid); i++{
 		for j:= 0; j < len(gameGrid[i]); j++{
 			gameGrid[i][j] = question
+			result = i
+			result2 = j
 		}
 	}
+	return result, result2
 }
 
-func PlaceBombs(){
+func PlaceBombs(nBombs int){
 	
 	var bombCount int = 0
 
@@ -130,7 +135,7 @@ func PlaceBombs(){
 		if(gameGrid[rR][rC] == question){
 			gameGrid[rR][rC] = bomb
 			// fmt.Printf("\nThere is a bomb at X:%v Y:%v \n", rR, rC)
-			// un-comment above line to see where bombs are if you are testing it works
+			// un-comment above line to see where bombs are if you are manually testing it works
 			bombCount++
 		}
 	
@@ -149,7 +154,7 @@ func DisplayGrid(){
 	fmt.Println("")
 }
 
-func AdjacentBombs(xInput int, yInput int){
+func AdjacentBombs(xInput int, yInput int) int{
 
 	if (gameGrid[xInput][yInput] == question){
 		
@@ -161,7 +166,14 @@ func AdjacentBombs(xInput int, yInput int){
             }
         }
 		}
+
+		return bombDisplay
 	
+}
+
+func ReRenderGrid(){
+		fmt.Printf("\n That cell is clear! There are %v cells remaining \n", clearCells - count)
+		DisplayGrid()
 }
 
 func CheckInput(){
@@ -181,19 +193,17 @@ func CheckInput(){
 			AdjacentBombs(xInput, yInput)
 			if(bombDisplay > 0){
 				gameGrid[xInput][yInput] = "\u001B[38;2;255;165;0m" + strconv.FormatInt(int64(bombDisplay), 10) + "\u001B[0m"
-				fmt.Printf("\n That cell is clear! There are %v cells remaining \n", clearCells - count)
-				DisplayGrid()
+				ReRenderGrid()
 			} else {
 			gameGrid[xInput][yInput] = " "
-			fmt.Printf("\n That cell is clear! There are %v cells remaining \n", clearCells - count)
-			DisplayGrid()
+			ReRenderGrid()
 			}
 
 		} else if (xInput >= 10 || xInput < 0  || yInput >= 10 || yInput < 0){
 
 			fmt.Printf("\nInvalid input \n \n")
 
-		}  else if (gameGrid[xInput][yInput] != question){
+		} else if (gameGrid[xInput][yInput] != question){
 
 			gameGrid[xInput][yInput] = rBomb
 			DisplayGrid()
@@ -239,7 +249,7 @@ func InitGame(){
 	GameStart()
 	Wait(1)
 	FillGrid()
-	PlaceBombs()
+	PlaceBombs(nBombs)
 	DisplayGrid()
 	Wait(1)
 	CheckInput()
